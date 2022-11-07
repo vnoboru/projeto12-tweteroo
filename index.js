@@ -5,9 +5,8 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-let tweetsData = [];
-let usersData = [];
-let userAvatar;
+const tweetsData = [];
+const usersData = [];
 
 app.post("/sign-up", (req, res) => {
   const userData = {
@@ -15,7 +14,6 @@ app.post("/sign-up", (req, res) => {
     avatar: req.body.avatar,
   };
 
-  userAvatar = userData.avatar;
   usersData.push(userData);
   res.send("OK");
 });
@@ -23,7 +21,8 @@ app.post("/sign-up", (req, res) => {
 app.post("/tweets", (req, res) => {
   const tweetData = {
     username: req.body.username,
-    avatar: userAvatar,
+    avatar: usersData.find((user) => user.username === req.body.username)
+      .avatar,
     tweet: req.body.tweet,
   };
 
@@ -32,7 +31,8 @@ app.post("/tweets", (req, res) => {
 });
 
 app.get("/tweets", (req, res) => {
-  res.send(tweetsData.slice(-10));
+  let arrayTweets = tweetsData.slice(-10);
+  res.send(arrayTweets.reverse());
 });
 
 app.listen(5000, () => console.log("App running in port: 5000"));
